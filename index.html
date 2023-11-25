@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Management</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+        margin: 20px;
+      }
+
+      .flex-container {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+      }
+
+      .custom-form,
+      .company-list {
+        flex: 1;
+        max-width: 45%;
+      }
+
+      h2 {
+        color: #333;
+      }
+      .custom-form {
+        position: sticky;
+        top: 0;
+        right: 0;
+      }
+      label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #218838;
+      }
+
+      .delete-button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        border: 1px solid #ddd;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="flex-container">
+      <div class="custom-form">
+        <h2>Create Company</h2>
+
+        <form id="newCompanyForm">
+          <label for="companyName">Company Name:</label>
+          <input
+            type="text"
+            id="newCompanyName"
+            name="newCompanyName"
+            required
+          />
+
+          <label for="description">Description:</label>
+          <textarea
+            id="newDescription"
+            name="newDescription"
+            rows="4"
+            required
+          ></textarea>
+
+          <label for="contactEmail">Contact Email:</label>
+          <input
+            type="email"
+            id="newContactEmail"
+            name="newContactEmail"
+            required
+          />
+
+          <label for="phoneNumber">Phone Number:</label>
+          <input type="tel" id="newPhoneNumber" name="newPhoneNumber" />
+
+          <button type="button" onclick="addNewCompany()">
+            Create Company
+          </button>
+        </form>
+      </div>
+
+      <div class="company-list">
+        <h2>List of Companies</h2>
+        <ul id="companyListing"></ul>
+      </div>
+    </div>
+
+    <script>
+      window.onload = function () {
+        loadCompanyList();
+      };
+
+      function addNewCompany() {
+        var companyName = document.getElementById("newCompanyName").value;
+        var description = document.getElementById("newDescription").value;
+        var contactEmail = document.getElementById("newContactEmail").value;
+        var phoneNumber = document.getElementById("newPhoneNumber").value;
+
+        var key = "company_" + new Date().getTime();
+
+        var company = {
+          companyName: companyName,
+          description: description,
+          contactEmail: contactEmail,
+          phoneNumber: phoneNumber,
+        };
+
+        localStorage.setItem(key, JSON.stringify(company));
+
+        loadCompanyList();
+
+        document.getElementById("newCompanyForm").reset();
+      }
+
+      function loadCompanyList() {
+        var companyListing = document.getElementById("companyListing");
+        companyListing.innerHTML = "";
+
+        for (var i = 0; i < localStorage.length; i++) {
+          var key = localStorage.key(i);
+          var company = JSON.parse(localStorage.getItem(key));
+
+          var listItem = document.createElement("li");
+          listItem.innerHTML = `
+                    <h4>${company.companyName}</h4>
+                    <p>Description: ${company.description}</p>
+                    <p>Contact Email: ${company.contactEmail}</p>
+                    <p>Phone Number: ${company.phoneNumber}</p>
+                    <button class="delete-button" onclick="removeCompany('${key}')">Delete</button>
+                `;
+
+          companyListing.appendChild(listItem);
+        }
+      }
+
+      function removeCompany(key) {
+        localStorage.removeItem(key);
+        loadCompanyList();
+      }
+    </script>
+  </body>
+</html>
